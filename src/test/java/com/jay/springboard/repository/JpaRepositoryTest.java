@@ -2,6 +2,7 @@ package com.jay.springboard.repository;
 
 import com.jay.springboard.config.JpaConfig;
 import com.jay.springboard.domain.Article;
+import com.jay.springboard.domain.UserAccount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,15 @@ public class JpaRepositoryTest {
 
   private final ArticleRepository articleRepository;
   private final ArticleCommentRepository articleCommentRepository;
+  private final UserAccountRepository userAccountRepository;
 
   public JpaRepositoryTest(
-          @Autowired ArticleRepository articleRepository,
-          @Autowired ArticleCommentRepository articleCommentRepository) {
+      @Autowired ArticleRepository articleRepository,
+      @Autowired ArticleCommentRepository articleCommentRepository,
+      @Autowired UserAccountRepository userAccountRepository) {
     this.articleRepository = articleRepository;
     this.articleCommentRepository = articleCommentRepository;
+    this.userAccountRepository = userAccountRepository;
   }
 
   @DisplayName("select test")
@@ -42,7 +46,8 @@ public class JpaRepositoryTest {
   void insert() {
     // given
     long previousCount = articleRepository.count();
-    Article article = Article.of("title", "content", "#spring");
+    UserAccount userAccount = userAccountRepository.save(UserAccount.of("id", "password", "email@naver.com", "nickname", "memo"));
+    Article article = Article.of(userAccount, "title", "content", "#java");
 
     // when
     articleRepository.save(article);
@@ -57,7 +62,7 @@ public class JpaRepositoryTest {
     // given
     Article article = articleRepository.findById(1L).orElseThrow();
 
-    String updatedHashtag = "#spring-boot";
+    String updatedHashtag = "#spring";
     article.setHashtag(updatedHashtag);
 
     // when
